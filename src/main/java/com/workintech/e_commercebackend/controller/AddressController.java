@@ -1,6 +1,6 @@
 package com.workintech.e_commercebackend.controller;
 
-import com.workintech.e_commercebackend.entity.Address;
+import com.workintech.e_commercebackend.dto.AddressDto;
 import com.workintech.e_commercebackend.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +19,8 @@ public class AddressController {
         this.addressService = addressService;
     }
     @PostMapping("/")
-    public Address save(@RequestBody Address address){
-       return addressService.save(address);
+    public AddressDto save(@RequestBody AddressDto addressDto){
+       return addressService.save(addressDto);
     }
 
 }

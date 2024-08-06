@@ -1,12 +1,16 @@
 package com.workintech.e_commercebackend.service;
 
+import com.workintech.e_commercebackend.dto.AddressDto;
 import com.workintech.e_commercebackend.entity.Address;
+import com.workintech.e_commercebackend.mapper.AddressMapper;
 import com.workintech.e_commercebackend.repository.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 
@@ -19,41 +23,48 @@ public class AddressServiceImpl implements AddressService{
     }
 
     @Override
-    public List<Address> findAll() {
-        return addressRepository.findAll();
+    public List<AddressDto> findAll() {
+        return addressRepository.findAll().
+                stream().
+                map((address) -> AddressMapper.addressToAddressDto(address))
+                .collect(Collectors.toList());
+
     }
 
     @Override
-    public Address findById(long id) {
+    public AddressDto findById(long id) {
        Optional<Address> optionalAddress=addressRepository.findById(id);
        if(optionalAddress.isPresent()){
-           return optionalAddress.get();
+           return AddressMapper.addressToAddressDto(optionalAddress.get());
+
        }
        //throw exception
         return null;
     }
 
     @Override
-    public Address save(Address address) {
-        Optional<Address> optionalAddress=addressRepository.findById(address.getId());
+    public AddressDto save(AddressDto addressDto) {
+        Optional<Address> optionalAddress=addressRepository.findById(addressDto.getId());
         if(optionalAddress.isPresent()){
             //throw exception
         }
+        Address address=AddressMapper.addressDtoToAddress(addressDto);
         Address savedAddress=addressRepository.save(address);
-        return savedAddress;
+        return AddressMapper.addressToAddressDto(savedAddress);
     }
 
     @Override
-    public Address update(long id, Address address) {
+    public AddressDto update(long id, AddressDto addressDto) {
         findById(id);
-        address.setId(id);
+        addressDto.setId(id);
+        Address address=AddressMapper.addressDtoToAddress(addressDto);
         Address updateAddress=addressRepository.save(address);
-        return updateAddress;
+        return AddressMapper.addressToAddressDto(updateAddress);
     }
 
     @Override
-    public Address delete(long id) {
-        Address foundAddress=findById(id);
+    public AddressDto delete(long id) {
+        AddressDto foundAddress=findById(id);
         addressRepository.deleteById(id);
         return foundAddress;
     }
